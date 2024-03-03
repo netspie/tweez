@@ -4,25 +4,28 @@ import (
 	"encoding/json"
 	"net/http"
 	"quiz/basic"
+	"quiz/domain"
 	"quiz/routes"
 	"strconv"
 )
 
 const apiVersion = 1
 
-func (app *application) route() *http.ServeMux {
+func (api *api) route() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	prefix := "/api/v" + strconv.Itoa(apiVersion)
 
-	mux.HandleFunc(prefix+"/healthcheck", app.healthCheck)
+	mux.HandleFunc(prefix+"/healthcheck", api.healthCheck)
 
-	basic.HandleRequests(mux, prefix+"/questionSubmits", routes.QuestionSubmitRouteHandler{})
+	submitsRepo := basic.NewMemoRepository[*domain.QuestionSubmit](nil)
+
+	basic.HandleRequests(mux, prefix+"/questionSubmits", routes.NewQuestionSubmitRouteHandler(&submitsRepo))
 
 	return mux
 }
 
-func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
+func (api *api) healthCheck(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -30,7 +33,7 @@ func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]string{
 		"status":      "available",
-		"environment": app.config.env,
+		"environment": api.config.env,
 		"version":     version,
 	}
 

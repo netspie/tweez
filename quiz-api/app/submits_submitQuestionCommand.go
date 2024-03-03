@@ -6,7 +6,7 @@ import (
 )
 
 type SubmitQuestionCommand struct {
-	UserId      string
+	AuthorId    string
 	CreatorId   string
 	CreatorName string
 	Question    string
@@ -17,4 +17,6 @@ func HandleSubmitQuestionCommand(
 	cmd SubmitQuestionCommand,
 	r *basic.Repository[*domain.QuestionSubmit]) {
 
+	s := domain.NewQuestionSubmit("xyz", cmd.CreatorId, cmd.Question, cmd.Answers)
+	(*r).Add(&s)
 }

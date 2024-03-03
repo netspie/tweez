@@ -19,6 +19,8 @@ type GetSubmitQuestionQueryOut struct {
 
 func HandleGetSubmitQuestionQuery(
 	cmd GetSubmitQuestionQuery,
-	r *basic.Repository[*domain.QuestionSubmit]) {
+	r *basic.Repository[*domain.QuestionSubmit]) *domain.QuestionSubmit {
 
+	item, _ := (*r).Get(cmd.QuestionSubmitId)
+	return item
 }

@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	app := &application{
+	app := &api{
 		config: cfg,
 		logger: logger,
 	}
@@ -42,7 +42,7 @@ type config struct {
 	env  string
 }
 
-type application struct {
+type api struct {
 	config config
 	logger *log.Logger
 }
