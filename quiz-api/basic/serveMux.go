@@ -23,7 +23,6 @@ func HandleRequests(mux *http.ServeMux, resourcePath string, handler RouteHandle
 }
 
 func getOrCreateResourceHandler(w http.ResponseWriter, r *http.Request, handler RouteHandler) {
-
 	switch r.Method {
 	case http.MethodGet:
 		handler.HandleGetMany(w, r)

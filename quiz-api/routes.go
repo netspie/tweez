@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"quiz/basic"
 	"quiz/routes"
@@ -28,7 +28,20 @@ func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, "status: available")
-	fmt.Fprintf(w, "environment: %s\n", "dev")
-	fmt.Fprintf(w, "version: %s\n", "1.0.0")
+	data := map[string]string{
+		"status":      "available",
+		"environment": app.config.env,
+		"version":     version,
+	}
+
+	js, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	js = append(js, '\n')
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
