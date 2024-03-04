@@ -23,7 +23,7 @@ func main() {
 		logger: logger,
 	}
 
-	addr := fmt.Sprintf(":%d", cfg.port)
+	addr := fmt.Sprintf("localhost:%d", cfg.port)
 	srv := http.Server{
 		Addr:         addr,
 		Handler:      app.route(),

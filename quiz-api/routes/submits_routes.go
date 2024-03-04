@@ -20,6 +20,10 @@ func NewQuestionSubmitRouteHandler(repo basic.Repository[*domain.QuestionSubmit]
 	}
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 type SubmitQuestionApiRequest struct {
 	CreatorId   string    `json:"creatorId"`
 	CreatorName string    `json:"creatorName"`
@@ -34,8 +38,7 @@ func (handler QuestionSubmitRouteHandler) HandlePost(w http.ResponseWriter, r *h
 	}
 
 	// TODO: validate request
-
-	app.HandleSubmitQuestionCommand(
+	err := app.HandleSubmitQuestionCommand(
 		app.SubmitQuestionCommand{
 			AuthorId:    "",
 			CreatorId:   req.CreatorId,
@@ -43,6 +46,10 @@ func (handler QuestionSubmitRouteHandler) HandlePost(w http.ResponseWriter, r *h
 			Question:    req.Question,
 			Answers:     req.Answers,
 		}, handler.Repo)
+
+	if err != nil {
+		httpx.WriteResponse(ErrorResponse{Error: err.Error()}, w)
+	}
 }
 
 func (handler QuestionSubmitRouteHandler) HandleGetSingle(w http.ResponseWriter, r *http.Request) {
