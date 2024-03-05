@@ -1,12 +1,41 @@
-package app
+package submits
 
 import (
 	"errors"
-	"quiz/basic"
+	"net/http"
 	"quiz/basic/colx"
+	"quiz/basic/ddd"
+	"quiz/basic/httpx"
 	"quiz/basic/uuidx"
-	"quiz/domain"
 )
+
+type SubmitQuestionApiRequest struct {
+	CreatorId   string    `json:"creatorId"`
+	CreatorName string    `json:"creatorName"`
+	Question    string    `json:"question"`
+	Answers     [4]string `json:"answers"`
+}
+
+func (handler QuestionSubmitRouteHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
+	req := &SubmitQuestionApiRequest{}
+	if httpx.ReadRequest(req, w, r) != nil {
+		return
+	}
+
+	// TODO: validate request
+	err := HandleSubmitQuestionCommand(
+		SubmitQuestionCommand{
+			AuthorId:    "",
+			CreatorId:   req.CreatorId,
+			CreatorName: req.CreatorName,
+			Question:    req.Question,
+			Answers:     req.Answers,
+		}, handler.Repo)
+
+	if err != nil {
+		httpx.WriteResponse(httpx.ErrorResponse{Error: err.Error()}, w)
+	}
+}
 
 type SubmitQuestionCommand struct {
 	AuthorId    string
@@ -19,20 +48,20 @@ type SubmitQuestionCommand struct {
 
 func HandleSubmitQuestionCommand(
 	cmd SubmitQuestionCommand,
-	r *basic.Repository[*domain.QuestionSubmit]) error {
+	r *ddd.Repository[*QuestionSubmit]) error {
 
-	err := validate(cmd)
+	err := validateCommand(cmd)
 	if err != nil {
 		return err
 	}
 
-	s := domain.NewQuestionSubmit("xyz", cmd.CreatorId, cmd.Question, cmd.Answers)
+	s := NewQuestionSubmit("xyz", cmd.CreatorId, cmd.Question, cmd.Answers, cmd.AnswerIdx)
 	(*r).Add(&s)
 
 	return nil
 }
 
-func validate(
+func validateCommand(
 	cmd SubmitQuestionCommand) error {
 
 	if !uuidx.IsValidUUID(cmd.AuthorId) {

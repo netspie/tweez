@@ -1,8 +1,8 @@
-package app
+package questions
 
 import (
-	"quiz/basic"
-	"quiz/domain"
+	"quiz/basic/ddd"
+	"quiz/features/submits"
 )
 
 type ConfirmQuestionCommand struct {
@@ -15,6 +15,6 @@ type ConfirmQuestionCommand struct {
 
 func HandleConfirmQuestionCommand(
 	cmd ConfirmQuestionCommand,
-	r *basic.Repository[*domain.QuestionSubmit]) {
+	r *ddd.Repository[*submits.QuestionSubmit]) {
 
 }

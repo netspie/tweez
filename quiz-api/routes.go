@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"quiz/basic"
-	"quiz/domain"
-	"quiz/routes"
+	"quiz/basic/ddd"
+	"quiz/basic/httpx"
+	"quiz/features/submits"
 	"strconv"
 )
 
@@ -18,9 +18,9 @@ func (api *api) route() *http.ServeMux {
 
 	mux.HandleFunc(prefix+"/healthcheck", api.healthCheck)
 
-	submitsRepo := basic.NewMemoRepository[*domain.QuestionSubmit](nil)
+	submitsRepo := ddd.NewMemoRepository[*submits.QuestionSubmit](nil)
 
-	basic.HandleRequests(mux, prefix+"/questionSubmits", routes.NewQuestionSubmitRouteHandler(&submitsRepo))
+	httpx.HandleRequests(mux, prefix+"/questionSubmits", submits.NewQuestionSubmitRouteHandler(&submitsRepo))
 
 	return mux
 }
@@ -37,7 +37,7 @@ func (api *api) healthCheck(w http.ResponseWriter, r *http.Request) {
 		"version":     version,
 	}
 
-	js, err := json.Marshal(data)
+	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return

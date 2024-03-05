@@ -1,4 +1,4 @@
-package basic
+package ddd
 
 type Repository[T Entity] interface {
 	Get(id string) (T, bool)

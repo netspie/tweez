@@ -1,4 +1,4 @@
-package basic
+package ddd
 
 type MemoRepository[T Entity] struct {
 	empty T
