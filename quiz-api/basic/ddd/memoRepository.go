@@ -22,7 +22,7 @@ func (r *MemoRepository[T]) Get(id string) (T, bool) {
 }
 
 func (r *MemoRepository[T]) Add(item T) bool {
-	id := item.Id()
+	id := item.GetId()
 	_, res := r.items[id]
 	if res {
 		return false
@@ -33,7 +33,7 @@ func (r *MemoRepository[T]) Add(item T) bool {
 }
 
 func (r *MemoRepository[T]) Update(item T) bool {
-	id := item.Id()
+	id := item.GetId()
 	_, res := r.items[id]
 	if !res {
 		return false
@@ -44,7 +44,7 @@ func (r *MemoRepository[T]) Update(item T) bool {
 }
 
 func (r *MemoRepository[T]) Delete(item T) bool {
-	id := item.Id()
+	id := item.GetId()
 	_, res := r.items[id]
 	if !res {
 		return false

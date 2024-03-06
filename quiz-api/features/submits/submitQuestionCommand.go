@@ -7,6 +7,8 @@ import (
 	"quiz/basic/ddd"
 	"quiz/basic/httpx"
 	"quiz/basic/uuidx"
+
+	"github.com/google/uuid"
 )
 
 type SubmitQuestionApiRequest struct {
@@ -14,6 +16,7 @@ type SubmitQuestionApiRequest struct {
 	CreatorName string    `json:"creatorName"`
 	Question    string    `json:"question"`
 	Answers     [4]string `json:"answers"`
+	AnswerIdx   int       `json:"answerIdx"`
 }
 
 func (handler QuestionSubmitRouteHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +25,6 @@ func (handler QuestionSubmitRouteHandler) HandlePost(w http.ResponseWriter, r *h
 		return
 	}
 
-	// TODO: validate request
 	err := HandleSubmitQuestionCommand(
 		SubmitQuestionCommand{
 			AuthorId:    "",
@@ -30,6 +32,7 @@ func (handler QuestionSubmitRouteHandler) HandlePost(w http.ResponseWriter, r *h
 			CreatorName: req.CreatorName,
 			Question:    req.Question,
 			Answers:     req.Answers,
+			AnswerIdx:   req.AnswerIdx,
 		}, handler.Repo)
 
 	if err != nil {
@@ -55,7 +58,7 @@ func HandleSubmitQuestionCommand(
 		return err
 	}
 
-	s := NewQuestionSubmit("xyz", cmd.CreatorId, cmd.Question, cmd.Answers, cmd.AnswerIdx)
+	s := NewQuestionSubmit(uuid.NewString(), cmd.CreatorId, cmd.Question, cmd.Answers, cmd.AnswerIdx)
 	(*r).Add(&s)
 
 	return nil
@@ -85,11 +88,11 @@ func validateCommand(
 	}
 
 	if colx.HasEmptyStrings(cmd.Answers[:]) {
-		return errors.New("All 4 answers must be provided")
+		return errors.New("all 4 answers must be provided")
 	}
 
 	if colx.IsInRange(cmd.Answers[:], cmd.AnswerIdx) {
-		return errors.New("Valid answer index must be provided")
+		return errors.New("valid answer index must be provided")
 	}
 
 	return nil
