@@ -16,10 +16,6 @@ func NewQuestionSubmitRouteHandler(repo ddd.Repository[*QuestionSubmit]) Questio
 	}
 }
 
-func (handler QuestionSubmitRouteHandler) HandleGetMany(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "HandleGetMany Question Submit")
-}
-
 func (handler QuestionSubmitRouteHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "HandlePut Question Submit")
 }

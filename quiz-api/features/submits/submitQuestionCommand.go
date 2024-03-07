@@ -3,9 +3,9 @@ package submits
 import (
 	"errors"
 	"net/http"
-	"quiz/basic/colx"
 	"quiz/basic/ddd"
 	"quiz/basic/httpx"
+	"quiz/basic/slicex"
 	"quiz/basic/uuidx"
 
 	"github.com/google/uuid"
@@ -87,11 +87,11 @@ func validateCommand(
 		return errors.New("question must be provided")
 	}
 
-	if colx.HasEmptyStrings(cmd.Answers[:]) {
+	if slicex.HasEmptyStrings(cmd.Answers[:]) {
 		return errors.New("all 4 answers must be provided")
 	}
 
-	if colx.IsInRange(cmd.Answers[:], cmd.AnswerIdx) {
+	if slicex.IsInRange(cmd.Answers[:], cmd.AnswerIdx) {
 		return errors.New("valid answer index must be provided")
 	}
 

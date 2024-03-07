@@ -1,5 +1,7 @@
 package ddd
 
+import "quiz/basic/mapx"
+
 type MemoRepository[T Entity] struct {
 	empty T
 	items map[string]T
@@ -19,6 +21,10 @@ func (r *MemoRepository[T]) Get(id string) (T, bool) {
 	}
 
 	return item, res
+}
+
+func (r *MemoRepository[T]) GetMany() ([]T, bool) {
+	return mapx.Map(r.items, func(key string, v T) T { return v }), true
 }
 
 func (r *MemoRepository[T]) Add(item T) bool {
